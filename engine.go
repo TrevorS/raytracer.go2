@@ -8,40 +8,39 @@ import (
 )
 
 func main() {
-	nx := 1024
-	ny := 768
-	ns := 100
+	config := Config{
+		width:    500,
+		height:   500,
+		samples:  10,
+		from:     Vec3{13, 2, 3},
+		at:       Vec3{0, 0, 0},
+		up:       Vec3{0, 1, 0},
+		fov:      75.0,
+		aperture: 0.01,
+	}
 
-	header := getHeader(nx, ny)
+	header := getHeader(config.width, config.height)
 	fmt.Print(header)
 
 	world := RandomScene()
 
-	from := Vec3{13, 2, 3}
-	at := Vec3{0, 0, 0}
-	up := Vec3{0, 1, 0}
-	fvov := 75.0
-	aspect := float64(nx) / float64(ny)
-	distToFocus := from.subtract(at).length()
-	aperture := 0.01
-
 	camera := NewCamera(
-		from,
-		at,
-		up,
-		fvov,
-		aspect,
-		aperture,
-		distToFocus,
+		config.from,
+		config.at,
+		config.up,
+		config.fov,
+		config.aspectRatio(),
+		config.aperture,
+		config.focusDistance(),
 	)
 
-	for j := ny - 1; j >= 0; j-- {
-		for i := 0; i < nx; i++ {
+	for j := config.height - 1; j >= 0; j-- {
+		for i := 0; i < config.width; i++ {
 			color := Vec3Zero()
 
-			for s := 0; s < ns; s++ {
-				u := (float64(i) + rand.Float64()) / float64(nx)
-				v := (float64(j) + rand.Float64()) / float64(ny)
+			for s := 0; s < config.samples; s++ {
+				u := (float64(i) + rand.Float64()) / float64(config.width)
+				v := (float64(j) + rand.Float64()) / float64(config.height)
 
 				r := camera.getRay(u, v)
 
@@ -50,7 +49,7 @@ func main() {
 				color.inPlaceAdd(newColor)
 			}
 
-			color.inPlaceDivideScalar(float64(ns))
+			color.inPlaceDivideScalar(float64(config.samples))
 
 			gammaCorrectedColor := Vec3{
 				math.Sqrt(color.r()),
