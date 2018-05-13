@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"strconv"
 )
@@ -37,9 +38,15 @@ func main() {
 
 			color.inPlaceDivideScalar(float64(ns))
 
-			ir := int(255.99 * color.r())
-			ig := int(255.99 * color.g())
-			ib := int(255.99 * color.b())
+			gammaCorrectedColor := Vec3{
+				math.Sqrt(color.r()),
+				math.Sqrt(color.g()),
+				math.Sqrt(color.b()),
+			}
+
+			ir := int(255.99 * gammaCorrectedColor.r())
+			ig := int(255.99 * gammaCorrectedColor.g())
+			ib := int(255.99 * gammaCorrectedColor.b())
 
 			fmt.Printf("%v %v %v\n", ir, ig, ib)
 		}
