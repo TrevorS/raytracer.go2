@@ -16,6 +16,17 @@ type Hit struct {
 // HitableList is an array of Hitable graphics objects.
 type HitableList []Hitable
 
+// NewHitableList returns a dynamically sized HitableList.
+func NewHitableList(size int) HitableList {
+	return make(HitableList, size)
+}
+
+func (hList *HitableList) add(hitable Hitable) HitableList {
+	*hList = append(*hList, hitable)
+
+	return *hList
+}
+
 func (hList HitableList) hit(r Ray, tMin, tMax float64) (bool, *Hit) {
 	hitAnything := false
 	closest := tMax
