@@ -7,7 +7,7 @@ import (
 
 // Color returns a color from a Ray.
 func Color(r Ray, world HitableList) Vec3 {
-	didHit, hit := world.hit(r, 0.0, math.MaxFloat64)
+	didHit, hit := world.hit(r, 0.001, math.MaxFloat64)
 
 	if didHit {
 		target := hit.p.add(hit.normal).add(randomInUnitSphere())
