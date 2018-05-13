@@ -15,10 +15,45 @@ func main() {
 	header := getHeader(nx, ny)
 	fmt.Print(header)
 
-	sphere1 := Sphere{Vec3{0.0, 0.0, -1.0}, 0.5}
-	sphere2 := Sphere{Vec3{0, -100.5, -1}, 100}
+	sphere1 := Sphere{
+		center: Vec3{0.0, 0.0, -1.0},
+		radius: 0.5,
+		material: Lambertian{
+			albedo: Vec3{0.8, 0.3, 0.3},
+		},
+	}
 
-	world := HitableList{sphere1, sphere2}
+	sphere2 := Sphere{
+		center: Vec3{0, -100.5, -1},
+		radius: 100,
+		material: Lambertian{
+			albedo: Vec3{0.8, 0.8, 0.0},
+		},
+	}
+
+	sphere3 := Sphere{
+		center: Vec3{1.0, 0.0, -1.0},
+		radius: 0.5,
+		material: Metal{
+			albedo: Vec3{0.8, 0.6, 0.2},
+		},
+	}
+
+	sphere4 := Sphere{
+		center: Vec3{-1.0, 0.0, -1.0},
+		radius: 0.5,
+		material: Metal{
+			albedo: Vec3{0.8, 0.8, 0.8},
+		},
+	}
+
+	world := HitableList{
+		sphere1,
+		sphere2,
+		sphere3,
+		sphere4,
+	}
+
 	camera := NewCamera()
 
 	for j := ny - 1; j >= 0; j-- {
@@ -31,7 +66,7 @@ func main() {
 
 				r := camera.getRay(u, v)
 
-				newColor := Color(r, world)
+				newColor := Color(r, world, 0)
 
 				color.inPlaceAdd(newColor)
 			}

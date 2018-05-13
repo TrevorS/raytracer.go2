@@ -7,9 +7,10 @@ type Hitable interface {
 
 // Hit is a record of a Hitable object being hit.
 type Hit struct {
-	t      float64
-	p      Vec3
-	normal Vec3
+	t        float64
+	p        Vec3
+	normal   Vec3
+	material Material
 }
 
 // HitableList is an array of Hitable graphics objects.

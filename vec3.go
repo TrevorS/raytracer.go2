@@ -175,3 +175,9 @@ func (v *Vec3) inPlaceDivideScalar(t float64) Vec3 {
 
 	return *v
 }
+
+func (v Vec3) reflect(normal Vec3) Vec3 {
+	v2 := normal.multiplyScalar(v.dot(normal) * 2)
+
+	return v.subtract(v2)
+}

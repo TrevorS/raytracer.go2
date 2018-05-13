@@ -6,8 +6,9 @@ import (
 
 // Sphere is a Hitable graphics object.
 type Sphere struct {
-	center Vec3
-	radius float64
+	center   Vec3
+	radius   float64
+	material Material
 }
 
 func (s Sphere) hit(r Ray, tMin, tMax float64) (bool, *Hit) {
@@ -26,9 +27,10 @@ func (s Sphere) hit(r Ray, tMin, tMax float64) (bool, *Hit) {
 			p := r.pointAtParameter(temp)
 
 			hit := Hit{
-				t:      temp,
-				p:      p,
-				normal: p.subtract(s.center).divideScalar(s.radius),
+				t:        temp,
+				p:        p,
+				normal:   p.subtract(s.center).divideScalar(s.radius),
+				material: s.material,
 			}
 
 			return true, &hit
@@ -39,9 +41,10 @@ func (s Sphere) hit(r Ray, tMin, tMax float64) (bool, *Hit) {
 			p := r.pointAtParameter(temp)
 
 			hit := Hit{
-				t:      temp,
-				p:      p,
-				normal: p.subtract(s.center).divideScalar(s.radius),
+				t:        temp,
+				p:        p,
+				normal:   p.subtract(s.center).divideScalar(s.radius),
+				material: s.material,
 			}
 
 			return true, &hit

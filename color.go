@@ -2,18 +2,20 @@ package main
 
 import (
 	"math"
-	"math/rand"
 )
 
 // Color returns a color from a Ray.
-func Color(r Ray, world HitableList) Vec3 {
+func Color(r Ray, world HitableList, depth int) Vec3 {
 	didHit, hit := world.hit(r, 0.001, math.MaxFloat64)
 
 	if didHit {
-		target := hit.p.add(hit.normal).add(randomInUnitSphere())
-		ray := Ray{hit.p, target.subtract(hit.p)}
+		didScatter, attenuation, scattered := hit.material.scatter(r, *hit)
 
-		return Color(ray, world).multiplyScalar(0.5)
+		if depth < 50 && didScatter {
+			return attenuation.multiply(Color(scattered, world, depth+1))
+		}
+
+		return Vec3Zero()
 	}
 
 	unitDirection := r.direction().unitVector()
@@ -24,18 +26,4 @@ func Color(r Ray, world HitableList) Vec3 {
 	v2 := Vec3{0.5, 0.7, 1.0}.multiplyScalar(t)
 
 	return v1.add(v2)
-}
-
-func randomInUnitSphere() Vec3 {
-	for {
-		p := Vec3{
-			rand.Float64(),
-			rand.Float64(),
-			rand.Float64(),
-		}.multiplyScalar(2.0).subtract(Vec3{1.0, 1.0, 1.0})
-
-		if p.squaredLength() >= 1.0 {
-			return p
-		}
-	}
 }
