@@ -64,7 +64,13 @@ func main() {
 		sphere5,
 	}
 
-	camera := NewCamera()
+	camera := NewCamera(
+		Vec3{-2, 2, 1},
+		Vec3{0, 0, -1},
+		Vec3{0, 1, 0},
+		90,
+		float64(nx)/float64(ny),
+	)
 
 	for j := ny - 1; j >= 0; j-- {
 		for i := 0; i < nx; i++ {

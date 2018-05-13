@@ -1,5 +1,9 @@
 package main
 
+import (
+	"math"
+)
+
 // Camera represents the viewpoint of our scene.
 type Camera struct {
 	lowerLeftCorner Vec3
@@ -9,12 +13,27 @@ type Camera struct {
 }
 
 // NewCamera returns an pre-initialized Camera.
-func NewCamera() Camera {
+func NewCamera(from, at, up Vec3, vfov, aspect float64) Camera {
+	theta := vfov * math.Pi / 180
+
+	halfHeight := math.Tan(theta / 2)
+	halfWidth := aspect * halfHeight
+
+	origin := from
+
+	w := from.subtract(at).unitVector()
+	u := up.cross(w).unitVector()
+	v := w.cross(u)
+
+	lowerLeftCorner := origin.subtract(u.multiplyScalar(halfWidth)).subtract(v.multiplyScalar(halfHeight)).subtract(w)
+	horizontal := u.multiplyScalar(halfWidth * 2)
+	vertical := v.multiplyScalar(halfHeight * 2)
+
 	return Camera{
-		lowerLeftCorner: Vec3{-2.0, -1.0, -1.0},
-		horizontal:      Vec3{4.0, 0.0, 0.0},
-		vertical:        Vec3{0.0, 2.0, 0.0},
-		origin:          Vec3{0.0, 0.0, 0.0},
+		lowerLeftCorner,
+		horizontal,
+		vertical,
+		origin,
 	}
 }
 
