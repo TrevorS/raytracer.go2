@@ -64,12 +64,22 @@ func main() {
 		sphere5,
 	}
 
+	from := Vec3{3, 3, 2}
+	at := Vec3{0, 0, -1}
+	up := Vec3{0, 1, 0}
+	fvov := 20.0
+	aspect := float64(nx) / float64(ny)
+	distToFocus := from.subtract(at).length()
+	aperture := 2.0
+
 	camera := NewCamera(
-		Vec3{-2, 2, 1},
-		Vec3{0, 0, -1},
-		Vec3{0, 1, 0},
-		90,
-		float64(nx)/float64(ny),
+		from,
+		at,
+		up,
+		fvov,
+		aspect,
+		aperture,
+		distToFocus,
 	)
 
 	for j := ny - 1; j >= 0; j-- {
