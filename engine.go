@@ -19,7 +19,7 @@ func main() {
 		center: Vec3{0.0, 0.0, -1.0},
 		radius: 0.5,
 		material: NewLambertian(
-			Vec3{0.8, 0.3, 0.3},
+			Vec3{0.1, 0.2, 0.5},
 		),
 	}
 
@@ -36,16 +36,23 @@ func main() {
 		radius: 0.5,
 		material: NewMetal(
 			Vec3{0.8, 0.6, 0.2},
-			0.3,
+			0.2,
 		),
 	}
 
 	sphere4 := Sphere{
 		center: Vec3{-1.0, 0.0, -1.0},
 		radius: 0.5,
-		material: NewMetal(
-			Vec3{0.8, 0.8, 0.8},
-			1.0,
+		material: NewDielectric(
+			1.5,
+		),
+	}
+
+	sphere5 := Sphere{
+		center: Vec3{-1.0, 0.0, -1.0},
+		radius: -0.45,
+		material: NewDielectric(
+			1.5,
 		),
 	}
 
@@ -54,6 +61,7 @@ func main() {
 		sphere2,
 		sphere3,
 		sphere4,
+		sphere5,
 	}
 
 	camera := NewCamera()

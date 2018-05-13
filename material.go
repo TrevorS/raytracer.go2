@@ -1,5 +1,9 @@
 package main
 
+import (
+	"math/rand"
+)
+
 // Material represents different materials hitable objects can be made from.
 type Material interface {
 	scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Vec3, scattered Ray)
@@ -10,6 +14,7 @@ type Lambertian struct {
 	albedo Vec3
 }
 
+// NewLambertian returns a Lambertian material.
 func NewLambertian(albedo Vec3) Lambertian {
 	return Lambertian{albedo}
 }
@@ -50,6 +55,55 @@ func (m Metal) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Vec3, s
 	scattered = Ray{hit.p, reflected.add(RandomInUnitSphere().multiplyScalar(m.fuzz))}
 	didScatter = scattered.direction().dot(hit.normal) > 0
 	attenuation = m.albedo
+
+	return
+}
+
+// Dielectric is a material that refracts.
+type Dielectric struct {
+	reflectiveIndex float64
+}
+
+// NewDielectric returns a Dielectric material.
+func NewDielectric(reflectiveIndex float64) Dielectric {
+	return Dielectric{reflectiveIndex}
+}
+
+func (d Dielectric) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Vec3, scattered Ray) {
+	didScatter = true
+	var outwardNormal Vec3
+	var niOverNt float64
+
+	reflected := rayIn.direction().unitVector().reflect(hit.normal)
+
+	attenuation = Vec3{1.0, 1.0, 1.0}
+
+	var reflectProb float64
+	var cosine float64
+
+	if rayIn.direction().dot(hit.normal) > 0 {
+		outwardNormal = hit.normal.negate()
+		niOverNt = d.reflectiveIndex
+		cosine = d.reflectiveIndex * rayIn.direction().dot(hit.normal) / rayIn.direction().length()
+	} else {
+		outwardNormal = hit.normal
+		niOverNt = 1.0 / d.reflectiveIndex
+		cosine = -1.0 * rayIn.direction().dot(hit.normal) / rayIn.direction().length()
+	}
+
+	didRefract, refracted := rayIn.direction().refract(outwardNormal, niOverNt)
+
+	if didRefract {
+		reflectProb = Schlick(cosine, d.reflectiveIndex)
+	} else {
+		reflectProb = 1.0
+	}
+
+	if rand.Float64() < reflectProb {
+		scattered = Ray{hit.p, reflected}
+	} else {
+		scattered = Ray{hit.p, *refracted}
+	}
 
 	return
 }

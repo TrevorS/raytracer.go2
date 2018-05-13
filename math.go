@@ -1,6 +1,9 @@
 package main
 
-import "math/rand"
+import (
+	"math"
+	"math/rand"
+)
 
 // RandomInUnitSphere returns a random Vector within the unit sphere.
 func RandomInUnitSphere() Vec3 {
@@ -15,4 +18,13 @@ func RandomInUnitSphere() Vec3 {
 			return p
 		}
 	}
+}
+
+// Schlick calculates an approximation of reflectivity varied by angle.
+func Schlick(cosine, refractiveIndex float64) float64 {
+	r0 := (1 - refractiveIndex) / (1 + refractiveIndex)
+
+	r0 = r0 * r0
+
+	return r0 + (1-r0)*math.Pow((1-cosine), 5)
 }

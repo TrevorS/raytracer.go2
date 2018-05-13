@@ -181,3 +181,22 @@ func (v Vec3) reflect(normal Vec3) Vec3 {
 
 	return v.subtract(v2)
 }
+
+func (v Vec3) refract(normal Vec3, niOverNt float64) (didRefract bool, refracted *Vec3) {
+	didRefract = false
+	var refractedRay Vec3
+
+	uv := v.unitVector()
+	dt := uv.dot(normal)
+
+	discriminant := 1.0 - niOverNt*niOverNt*(1-dt*dt)
+
+	if discriminant > 0 {
+		didRefract = true
+		refractedRay = uv.subtract(normal.multiplyScalar(dt)).multiplyScalar(niOverNt).subtract(normal.multiplyScalar(math.Sqrt(discriminant)))
+
+		return didRefract, &refractedRay
+	}
+
+	return didRefract, nil
+}
