@@ -8,8 +8,8 @@ import (
 )
 
 func main() {
-	nx := 200
-	ny := 100
+	nx := 1024
+	ny := 768
 	ns := 100
 
 	header := getHeader(nx, ny)
@@ -17,13 +17,13 @@ func main() {
 
 	world := RandomScene()
 
-	from := Vec3{3, 3, 2}
-	at := Vec3{0, 0, -1}
+	from := Vec3{13, 2, 3}
+	at := Vec3{0, 0, 0}
 	up := Vec3{0, 1, 0}
-	fvov := 20.0
+	fvov := 75.0
 	aspect := float64(nx) / float64(ny)
 	distToFocus := from.subtract(at).length()
-	aperture := 2.0
+	aperture := 0.01
 
 	camera := NewCamera(
 		from,

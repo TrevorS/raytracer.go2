@@ -4,6 +4,59 @@ import (
 	"math/rand"
 )
 
+// SimpleScene returns a HitableList of Spheres for testing.
+func SimpleScene() HitableList {
+	world := NewHitableList(0)
+
+	sphere := Sphere{
+		Vec3{0, 0, -1},
+		0.5,
+		NewLambertian(Vec3{
+			0.1, 0.2, 0.5,
+		}),
+	}
+
+	world.add(sphere)
+
+	sphere = Sphere{
+		Vec3{0, -100.5, -1},
+		100,
+		NewLambertian(Vec3{
+			0.8, 0.8, 0.0,
+		}),
+	}
+
+	world.add(sphere)
+
+	sphere = Sphere{
+		Vec3{1, 0, -1},
+		0.5,
+		NewMetal(Vec3{
+			0.8, 0.6, 0.2,
+		}, 0.0),
+	}
+
+	world.add(sphere)
+
+	sphere = Sphere{
+		Vec3{-1, 0, -1},
+		0.5,
+		NewDielectric(1.5),
+	}
+
+	world.add(sphere)
+
+	sphere = Sphere{
+		Vec3{-1, 0, -1},
+		-0.45,
+		NewDielectric(1.5),
+	}
+
+	world.add(sphere)
+
+	return world
+}
+
 // RandomScene returns a randomly generated HitableList.
 func RandomScene() HitableList {
 	var hitableList HitableList
