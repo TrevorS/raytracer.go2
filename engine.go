@@ -17,9 +17,10 @@ func main() {
 	vertical := Vec3{0.0, 2.0, 0.0}
 	origin := Vec3{0.0, 0.0, 0.0}
 
-	sphere := Sphere{Vec3{0.0, 0.0, -1.0}, 0.5}
+	sphere1 := Sphere{Vec3{0.0, 0.0, -1.0}, 0.5}
+	sphere2 := Sphere{Vec3{0, -100.5, -1}, 100}
 
-	objects := []Sphere{sphere}
+	world := HitableList{sphere1, sphere2}
 
 	for j := ny - 1; j >= 0; j-- {
 		for i := 0; i < nx; i++ {
@@ -33,11 +34,7 @@ func main() {
 				direction,
 			}
 
-			var color Vec3
-
-			for _, object := range objects {
-				color = object.colorAt(ray)
-			}
+			color := Color(ray, world)
 
 			ir := int(255.99 * color.r())
 			ig := int(255.99 * color.g())
