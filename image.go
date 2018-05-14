@@ -16,8 +16,6 @@ func WriteImage(framebuffer *[]Vec3, config Config) {
 
 			pixel := (*framebuffer)[pixelIndex]
 
-			r, g, b, a := pixel.sqrt().RGBA()
-
 			img.Set(i, config.width-j-1, pixel.sqrt())
 		}
 	}
