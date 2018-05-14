@@ -10,6 +10,7 @@ type Config struct {
 	up       Vec3
 	fov      float64
 	aperture float64
+	filename string
 }
 
 func (c Config) aspectRatio() float64 {

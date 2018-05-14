@@ -200,3 +200,21 @@ func (v Vec3) refract(normal Vec3, niOverNt float64) (didRefract bool, refracted
 
 	return didRefract, nil
 }
+
+func (v Vec3) sqrt() Vec3 {
+	return Vec3{
+		math.Sqrt(v.e0),
+		math.Sqrt(v.e1),
+		math.Sqrt(v.e2),
+	}
+}
+
+// RGBA converts to color supported by Go Image library.
+func (v Vec3) RGBA() (r, g, b, a uint32) {
+	r = uint32(v.e0 * 0xffff)
+	g = uint32(v.e1 * 0xffff)
+	b = uint32(v.e2 * 0xffff)
+	a = 0xffff
+
+	return
+}
