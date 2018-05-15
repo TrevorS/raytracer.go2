@@ -12,11 +12,11 @@ func WriteImage(framebuffer *[]Vec3, config Config) {
 
 	for j := 0; j < config.height; j++ {
 		for i := 0; i < config.width; i++ {
-			pixelIndex := j*10 + i
+			pixelIndex := j*config.width + i
 
 			pixel := (*framebuffer)[pixelIndex]
 
-			img.Set(i, config.width-j-1, pixel.sqrt())
+			img.Set(i, j, pixel.sqrt())
 		}
 	}
 
