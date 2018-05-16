@@ -23,7 +23,7 @@ func (l Lambertian) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Ve
 	target := hit.p.add(hit.normal).add(RandomInUnitSphere())
 
 	// We could only scatter with some probability and divide albedo by the probability.
-	scattered = Ray{hit.p, target.subtract(hit.p)}
+	scattered = Ray{hit.p, target.subtract(hit.p), rayIn.time()}
 	didScatter = true
 	attenuation = l.albedo
 
@@ -52,7 +52,7 @@ func NewMetal(albedo Vec3, fuzz float64) Metal {
 func (m Metal) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Vec3, scattered Ray) {
 	reflected := rayIn.direction().unitVector().reflect(hit.normal)
 
-	scattered = Ray{hit.p, reflected.add(RandomInUnitSphere().multiplyScalar(m.fuzz))}
+	scattered = Ray{hit.p, reflected.add(RandomInUnitSphere().multiplyScalar(m.fuzz)), rayIn.time()}
 	didScatter = scattered.direction().dot(hit.normal) > 0
 	attenuation = m.albedo
 
@@ -100,9 +100,9 @@ func (d Dielectric) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Ve
 	}
 
 	if rand.Float64() < reflectProb {
-		scattered = Ray{hit.p, reflected}
+		scattered = Ray{hit.p, reflected, rayIn.time()}
 	} else {
-		scattered = Ray{hit.p, *refracted}
+		scattered = Ray{hit.p, *refracted, rayIn.time()}
 	}
 
 	return

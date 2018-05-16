@@ -2,6 +2,7 @@ package main
 
 import (
 	"math"
+	"math/rand"
 )
 
 // Camera represents the viewpoint of our scene.
@@ -14,10 +15,12 @@ type Camera struct {
 	v               Vec3
 	w               Vec3
 	lensRadius      float64
+	time0           float64
+	time1           float64
 }
 
 // NewCamera returns an pre-initialized Camera.
-func NewCamera(from, at, up Vec3, vfov, aspect, aperture, focusDistance float64) Camera {
+func NewCamera(from, at, up Vec3, vfov, aspect, aperture, focusDistance, t0, t1 float64) Camera {
 	lensRadius := aperture / 2
 
 	theta := vfov * math.Pi / 180
@@ -44,6 +47,8 @@ func NewCamera(from, at, up Vec3, vfov, aspect, aperture, focusDistance float64)
 		v,
 		w,
 		lensRadius,
+		t0,
+		t1,
 	}
 }
 
@@ -53,9 +58,11 @@ func (c Camera) getRay(s, t float64) Ray {
 
 	origin := c.origin.add(offset)
 	direction := c.lowerLeftCorner.add(c.horizontal.multiplyScalar(s)).add(c.vertical.multiplyScalar(t)).subtract(c.origin).subtract(offset)
+	time := c.time0 + rand.Float64()*(c.time1-c.time0)
 
 	return Ray{
 		origin,
 		direction,
+		time,
 	}
 }

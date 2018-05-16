@@ -2,15 +2,17 @@ package main
 
 // Config holds settings for preparing the rendering engine.
 type Config struct {
-	width    int
-	height   int
-	samples  int
-	from     Vec3
-	at       Vec3
-	up       Vec3
-	fov      float64
-	aperture float64
-	filename string
+	width     int
+	height    int
+	samples   int
+	from      Vec3
+	at        Vec3
+	up        Vec3
+	fov       float64
+	aperture  float64
+	filename  string
+	timeStart float64
+	timeEnd   float64
 }
 
 func (c Config) aspectRatio() float64 {

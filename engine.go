@@ -6,15 +6,17 @@ import (
 
 func main() {
 	config := Config{
-		width:    500,
-		height:   500,
-		samples:  100,
-		from:     Vec3{13, 2, 3},
-		at:       Vec3{0, 0, 0},
-		up:       Vec3{0, 1, 0},
-		fov:      75.0,
-		aperture: 0.01,
-		filename: "output.png",
+		width:     640,
+		height:    480,
+		samples:   20,
+		from:      Vec3{13, 2, 3},
+		at:        Vec3{0, 0, 0},
+		up:        Vec3{0, 1, 0},
+		fov:       20.0,
+		aperture:  0.00,
+		filename:  "output.png",
+		timeStart: 0,
+		timeEnd:   1,
 	}
 
 	world := RandomScene()
@@ -27,6 +29,8 @@ func main() {
 		config.aspectRatio(),
 		config.aperture,
 		config.focusDistance(),
+		config.timeStart,
+		config.timeEnd,
 	)
 
 	framebuffer := make([]Vec3, 0)

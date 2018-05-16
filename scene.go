@@ -8,49 +8,49 @@ import (
 func SimpleScene() HitableList {
 	world := NewHitableList(0)
 
-	sphere := Sphere{
+	sphere := NewStationarySphere(
 		Vec3{0, 0, -1},
 		0.5,
 		NewLambertian(Vec3{
 			0.1, 0.2, 0.5,
 		}),
-	}
+	)
 
 	world.add(sphere)
 
-	sphere = Sphere{
+	sphere = NewStationarySphere(
 		Vec3{0, -100.5, -1},
 		100,
 		NewLambertian(Vec3{
 			0.8, 0.8, 0.0,
 		}),
-	}
+	)
 
 	world.add(sphere)
 
-	sphere = Sphere{
+	sphere = NewStationarySphere(
 		Vec3{1, 0, -1},
 		0.5,
 		NewMetal(Vec3{
 			0.8, 0.6, 0.2,
 		}, 0.0),
-	}
+	)
 
 	world.add(sphere)
 
-	sphere = Sphere{
+	sphere = NewStationarySphere(
 		Vec3{-1, 0, -1},
 		0.5,
 		NewDielectric(1.5),
-	}
+	)
 
 	world.add(sphere)
 
-	sphere = Sphere{
+	sphere = NewStationarySphere(
 		Vec3{-1, 0, -1},
 		-0.45,
 		NewDielectric(1.5),
-	}
+	)
 
 	world.add(sphere)
 
@@ -61,7 +61,7 @@ func SimpleScene() HitableList {
 func RandomScene() HitableList {
 	var hitableList HitableList
 
-	sphere := Sphere{
+	sphere := NewStationarySphere(
 		Vec3{0, -1000, 0},
 		1000,
 		NewLambertian(
@@ -71,7 +71,7 @@ func RandomScene() HitableList {
 				0.5,
 			},
 		),
-	}
+	)
 
 	hitableList.add(sphere)
 
@@ -86,8 +86,9 @@ func RandomScene() HitableList {
 
 			if center.subtract(Vec3{4, 0.2, 0}).length() > 0.9 {
 				if chooseMaterial < 0.8 {
-					sphere := Sphere{
+					sphere := NewMovingSphere(
 						center,
+						center.add(Vec3{0, 0.5 * rand.Float64(), 0}),
 						0.2,
 						NewLambertian(
 							Vec3{
@@ -96,12 +97,14 @@ func RandomScene() HitableList {
 								rand.Float64() * rand.Float64(),
 							},
 						),
-					}
+						0,
+						1,
+					)
 
 					hitableList.add(sphere)
 
 				} else if chooseMaterial < 0.95 {
-					sphere := Sphere{
+					sphere := NewStationarySphere(
 						center,
 						0.2,
 						NewMetal(
@@ -112,16 +115,16 @@ func RandomScene() HitableList {
 							},
 							0.5*rand.Float64(),
 						),
-					}
+					)
 
 					hitableList.add(sphere)
 
 				} else {
-					sphere := Sphere{
+					sphere := NewStationarySphere(
 						center,
 						0.2,
 						NewDielectric(1.5),
-					}
+					)
 
 					hitableList.add(sphere)
 				}
@@ -129,15 +132,15 @@ func RandomScene() HitableList {
 		}
 	}
 
-	sphere = Sphere{
+	sphere = NewStationarySphere(
 		Vec3{0, 1, 0},
 		1.0,
 		NewDielectric(1.5),
-	}
+	)
 
 	hitableList.add(sphere)
 
-	sphere = Sphere{
+	sphere = NewStationarySphere(
 		Vec3{-4, 1, 0},
 		1.0,
 		NewLambertian(
@@ -147,11 +150,11 @@ func RandomScene() HitableList {
 				0.1,
 			},
 		),
-	}
+	)
 
 	hitableList.add(sphere)
 
-	sphere = Sphere{
+	sphere = NewStationarySphere(
 		Vec3{4, 1, 0},
 		1.0,
 		NewMetal(
@@ -162,7 +165,7 @@ func RandomScene() HitableList {
 			},
 			0.0,
 		),
-	}
+	)
 
 	hitableList.add(sphere)
 
