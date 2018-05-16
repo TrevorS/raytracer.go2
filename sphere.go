@@ -88,3 +88,20 @@ func (s Sphere) hit(r Ray, tMin, tMax float64) (bool, *Hit) {
 
 	return false, nil
 }
+
+func (s Sphere) boundingBox(t0, t1 float64) (hasBox bool, box *AABB) {
+	t0Box := AABB{
+		s.center(t0).subtract(Vec3{s.radius, s.radius, s.radius}),
+		s.center(t0).add(Vec3{s.radius, s.radius, s.radius}),
+	}
+
+	t1Box := AABB{
+		s.center(t1).subtract(Vec3{s.radius, s.radius, s.radius}),
+		s.center(t1).add(Vec3{s.radius, s.radius, s.radius}),
+	}
+
+	hasBox = true
+	box = SurroundingBox(t0Box, t1Box)
+
+	return
+}

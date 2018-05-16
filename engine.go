@@ -19,7 +19,7 @@ func main() {
 		timeEnd:   1,
 	}
 
-	world := RandomScene()
+	world := RandomScene(config)
 
 	camera := NewCamera(
 		config.from,

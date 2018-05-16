@@ -16,6 +16,10 @@ func Vec3Zero() Vec3 {
 	return Vec3{0, 0, 0}
 }
 
+func (v Vec3) get(index int) float64 {
+	return []float64{v.e0, v.e1, v.e2}[index]
+}
+
 func (v Vec3) x() float64 {
 	return v.e0
 }
