@@ -29,20 +29,16 @@ func SurroundingBox(box0, box1 AABB) *AABB {
 
 func (box AABB) hit(r Ray, tMin, tMax float64) bool {
 	for a := 0; a < 3; a++ {
-		t0 := math.Min(
-			(box.min.get(a)-r.origin().get(a))/r.direction().get(a),
-			(box.max.get(a)-r.origin().get(a))/r.direction().get(a),
-		)
+		minT := (box.min.get(a) - r.origin().get(a)) / r.direction().get(a)
+		maxT := (box.max.get(a) - r.origin().get(a)) / r.direction().get(a)
 
-		t1 := math.Max(
-			(box.min.get(a)-r.origin().get(a))/r.direction().get(a),
-			(box.max.get(a)-r.origin().get(a))/r.direction().get(a),
-		)
+		t0 := math.Min(minT, maxT)
+		t1 := math.Max(minT, maxT)
 
-		tMin := math.Max(t0, tMin)
-		tMax := math.Min(t1, tMax)
+		min := math.Max(t0, tMin)
+		max := math.Min(t1, tMax)
 
-		if tMax <= tMin {
+		if max <= min {
 			return false
 		}
 	}

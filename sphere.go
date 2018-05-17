@@ -100,8 +100,5 @@ func (s Sphere) boundingBox(t0, t1 float64) (hasBox bool, box *AABB) {
 		s.center(t1).add(Vec3{s.radius, s.radius, s.radius}),
 	}
 
-	hasBox = true
-	box = SurroundingBox(t0Box, t1Box)
-
-	return
+	return true, SurroundingBox(t0Box, t1Box)
 }

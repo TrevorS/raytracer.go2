@@ -5,7 +5,7 @@ import (
 )
 
 // SimpleScene returns a HitableList of Spheres for testing.
-func SimpleScene() Hitable {
+func SimpleScene(config Config) Hitable {
 	world := NewHitableList(0)
 
 	sphere := NewStationarySphere(
@@ -54,7 +54,9 @@ func SimpleScene() Hitable {
 
 	world.add(sphere)
 
-	return world
+	bvhNodes := BVHNode{}
+
+	return bvhNodes.newBVHNode(&world, config.timeStart, config.timeEnd)
 }
 
 // RandomScene returns a randomly generated HitableList.

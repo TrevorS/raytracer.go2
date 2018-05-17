@@ -131,9 +131,9 @@ func (hList HitableList) boundingBox(t0, t1 float64) (hasBox bool, box *AABB) {
 	box = firstBox
 
 	for i := 1; i < len(hList); i++ {
-		doesHaveBox, nextBox := hList[i].boundingBox(t0, t1)
+		doesHaveNextBox, nextBox := hList[i].boundingBox(t0, t1)
 
-		if doesHaveBox {
+		if doesHaveNextBox {
 			box = SurroundingBox(*box, *nextBox)
 		} else {
 			return false, nil
