@@ -20,8 +20,10 @@ func (n *BVHNode) newBVHNode(hList *HitableList, time0, time1 float64) *BVHNode 
 		sort.Sort(SortByX(list))
 	} else if axis == 1 {
 		sort.Sort(SortByY(list))
-	} else {
+	} else if axis == 2 {
 		sort.Sort(SortByZ(list))
+	} else {
+		panic("Unexpected axis!")
 	}
 
 	length := len(list)
