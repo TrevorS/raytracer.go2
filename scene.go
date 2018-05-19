@@ -11,19 +11,24 @@ func SimpleScene(config Config) Hitable {
 	sphere := NewStationarySphere(
 		Vec3{0, 0, -1},
 		0.5,
-		NewLambertian(Vec3{
-			0.1, 0.2, 0.5,
-		}),
+		NewLambertian(
+			ConstantTexture{Vec3{0.1, 0.2, 0.5}},
+		),
 	)
 
 	world.add(sphere)
 
+	checkerTexture := CheckerTexture{
+		odd:  ConstantTexture{Vec3{0.2, 0.3, 0.1}},
+		even: ConstantTexture{Vec3{0.9, 0.9, 0.9}},
+	}
+
 	sphere = NewStationarySphere(
 		Vec3{0, -100.5, -1},
 		100,
-		NewLambertian(Vec3{
-			0.8, 0.8, 0.0,
-		}),
+		NewLambertian(
+			checkerTexture,
+		),
 	)
 
 	world.add(sphere)
@@ -54,9 +59,7 @@ func SimpleScene(config Config) Hitable {
 
 	world.add(sphere)
 
-	bvhNodes := BVHNode{}
-
-	return bvhNodes.newBVHNode(&world, config.timeStart, config.timeEnd)
+	return world
 }
 
 // RandomScene returns a randomly generated HitableList.
@@ -67,11 +70,7 @@ func RandomScene(config Config) Hitable {
 		Vec3{0, -1000, 0},
 		1000,
 		NewLambertian(
-			Vec3{
-				0.5,
-				0.5,
-				0.5,
-			},
+			ConstantTexture{Vec3{0.5, 0.5, 0.5}},
 		),
 	)
 
@@ -93,11 +92,11 @@ func RandomScene(config Config) Hitable {
 						center.add(Vec3{0, 0.5 * rand.Float64(), 0}),
 						0.2,
 						NewLambertian(
-							Vec3{
+							ConstantTexture{Vec3{
 								rand.Float64() * rand.Float64(),
 								rand.Float64() * rand.Float64(),
 								rand.Float64() * rand.Float64(),
-							},
+							}},
 						),
 						0,
 						1,
@@ -146,11 +145,7 @@ func RandomScene(config Config) Hitable {
 		Vec3{-4, 1, 0},
 		1.0,
 		NewLambertian(
-			Vec3{
-				0.4,
-				0.2,
-				0.1,
-			},
+			ConstantTexture{Vec3{0.4, 0.2, 0.1}},
 		),
 	)
 
@@ -174,4 +169,32 @@ func RandomScene(config Config) Hitable {
 	bvhNodes := BVHNode{}
 
 	return bvhNodes.newBVHNode(&hitableList, config.timeStart, config.timeEnd)
+}
+
+// TwoSpheres is a scene consisting of two checkered spheres.
+func TwoSpheres(config Config) Hitable {
+	hitables := NewHitableList(0)
+
+	checkerTexture := CheckerTexture{
+		odd:  ConstantTexture{Vec3{0.2, 0.3, 0.1}},
+		even: ConstantTexture{Vec3{0.9, 0.9, 0.9}},
+	}
+
+	sphere := NewStationarySphere(
+		Vec3{0, -10, 0},
+		10,
+		NewLambertian(checkerTexture),
+	)
+
+	hitables.add(sphere)
+
+	sphere = NewStationarySphere(
+		Vec3{0, 10, 0},
+		10,
+		NewLambertian(checkerTexture),
+	)
+
+	hitables.add(sphere)
+
+	return hitables
 }

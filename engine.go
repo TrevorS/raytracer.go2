@@ -19,7 +19,7 @@ func main() {
 		timeEnd:   1,
 	}
 
-	world := SimpleScene(config)
+	world := TwoSpheres(config)
 
 	camera := NewCamera(
 		config.from,

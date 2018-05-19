@@ -11,11 +11,11 @@ type Material interface {
 
 // Lambertian is a diffuse Material.
 type Lambertian struct {
-	albedo Vec3
+	albedo Texture
 }
 
 // NewLambertian returns a Lambertian material.
-func NewLambertian(albedo Vec3) Lambertian {
+func NewLambertian(albedo Texture) Lambertian {
 	return Lambertian{albedo}
 }
 
@@ -25,7 +25,7 @@ func (l Lambertian) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Ve
 	// We could only scatter with some probability and divide albedo by the probability.
 	scattered = Ray{hit.p, target.subtract(hit.p), rayIn.time()}
 	didScatter = true
-	attenuation = l.albedo
+	attenuation = l.albedo.value(0, 0, hit.p)
 
 	return
 }
