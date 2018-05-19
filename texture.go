@@ -31,3 +31,17 @@ func (ct CheckerTexture) value(u, v float64, p Vec3) Vec3 {
 
 	return ct.even.value(u, v, p)
 }
+
+// NoiseTexture is a Texture with Perlin noise.
+type NoiseTexture struct {
+	noise Perlin
+}
+
+// NewNoiseTexture returns a properly initialized NoiseTexture.
+func NewNoiseTexture() NoiseTexture {
+	return NoiseTexture{NewPerlin()}
+}
+
+func (nt NoiseTexture) value(u, v float64, p Vec3) Vec3 {
+	return Vec3{1, 1, 1}.multiplyScalar(nt.noise.noise(p))
+}
