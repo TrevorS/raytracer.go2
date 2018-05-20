@@ -134,6 +134,29 @@ func (dl DiffuseLight) emitted(u, v float64, p Vec3) Vec3 {
 	return dl.emit.value(u, v, p)
 }
 
+// Isotropic has a scattering function that picks a uniform random direction.
+type Isotropic struct {
+	albedo Texture
+}
+
+func (it Isotropic) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Vec3, scattered Ray) {
+	didScatter = true
+
+	scattered = Ray{
+		hit.p,
+		RandomInUnitSphere(),
+		rayIn.time(),
+	}
+
+	attenuation = it.albedo.value(hit.u, hit.v, hit.p)
+
+	return
+}
+
+func (it Isotropic) emitted(u, v float64, p Vec3) Vec3 {
+	return emitBlack()
+}
+
 func emitBlack() Vec3 {
 	return Vec3Zero()
 }

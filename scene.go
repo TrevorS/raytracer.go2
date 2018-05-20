@@ -420,3 +420,152 @@ func CornellBox(config Config) Hitable {
 
 	return hitables
 }
+
+// CornellSmoke is a smokey version of the Cornell box.
+func CornellSmoke(config Config) Hitable {
+	hitables := NewHitableList(0)
+
+	red := NewLambertian(
+		ConstantTexture{
+			Vec3{
+				0.65,
+				0.05,
+				0.05,
+			},
+		},
+	)
+
+	white := NewLambertian(
+		ConstantTexture{
+			Vec3{
+				0.73,
+				0.73,
+				0.73,
+			},
+		},
+	)
+
+	green := NewLambertian(
+		ConstantTexture{
+			Vec3{
+				0.12,
+				0.45,
+				0.15,
+			},
+		},
+	)
+
+	light := DiffuseLight{
+		ConstantTexture{
+			Vec3{
+				7,
+				7,
+				7,
+			},
+		},
+	}
+
+	flippedYZRectangle := FlipNormals{YZRectangle{
+		0,
+		555,
+		0,
+		555,
+		555,
+		green,
+	}}
+
+	hitables.add(flippedYZRectangle)
+
+	yzRectangle := YZRectangle{
+		0,
+		555,
+		0,
+		555,
+		0,
+		red,
+	}
+
+	hitables.add(yzRectangle)
+
+	xzRectangle := XZRectangle{
+		113,
+		443,
+		127,
+		432,
+		554,
+		light,
+	}
+
+	hitables.add(xzRectangle)
+
+	flippedXZRectangle := FlipNormals{XZRectangle{
+		0,
+		555,
+		0,
+		555,
+		555,
+		white,
+	}}
+
+	hitables.add(flippedXZRectangle)
+
+	xzRectangle = XZRectangle{
+		0,
+		555,
+		0,
+		555,
+		0,
+		white,
+	}
+
+	hitables.add(xzRectangle)
+
+	flippedXYRectangle := FlipNormals{XYRectangle{
+		0,
+		555,
+		0,
+		555,
+		555,
+		white,
+	}}
+
+	hitables.add(flippedXYRectangle)
+
+	box1 := Translate{
+		NewRotateY(
+			NewBox(
+				Vec3{0, 0, 0},
+				Vec3{165, 165, 165},
+				white,
+			),
+			-18,
+		),
+		Vec3{130, 0, 65},
+	}
+
+	cm1 := NewConstantMedium(box1, 0.01, ConstantTexture{
+		Vec3{1.0, 1.0, 1.0},
+	})
+
+	hitables.add(cm1)
+
+	box2 := Translate{
+		NewRotateY(
+			NewBox(
+				Vec3{0, 0, 0},
+				Vec3{165, 330, 165},
+				white,
+			),
+			15,
+		),
+		Vec3{265, 0, 295},
+	}
+
+	cm2 := NewConstantMedium(box2, 0.01, ConstantTexture{
+		Vec3Zero(),
+	})
+
+	hitables.add(cm2)
+
+	return hitables
+}

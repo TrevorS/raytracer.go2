@@ -19,7 +19,7 @@ func main() {
 		timeEnd:   1,
 	}
 
-	world := CornellBox(config)
+	world := CornellSmoke(config)
 
 	camera := NewCamera(
 		config.from,
