@@ -9,17 +9,17 @@ func main() {
 		width:     1024,
 		height:    768,
 		samples:   100,
-		from:      Vec3{13, 2, 3},
-		at:        Vec3{0, 0, 0},
+		from:      Vec3{278, 278, -800},
+		at:        Vec3{278, 278, 0},
 		up:        Vec3{0, 1, 0},
-		fov:       20.0,
+		fov:       40.0,
 		aperture:  0.00,
 		filename:  "output.png",
 		timeStart: 0,
 		timeEnd:   1,
 	}
 
-	world := SimpleLight(config)
+	world := CornellBox(config)
 
 	camera := NewCamera(
 		config.from,

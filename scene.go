@@ -279,3 +279,116 @@ func SimpleLight(config Config) Hitable {
 
 	return hitables
 }
+
+// CornellBox is the standard Cornell scene.
+func CornellBox(config Config) Hitable {
+	hitables := NewHitableList(0)
+
+	red := NewLambertian(
+		ConstantTexture{
+			Vec3{
+				0.65,
+				0.05,
+				0.05,
+			},
+		},
+	)
+
+	white := NewLambertian(
+		ConstantTexture{
+			Vec3{
+				0.73,
+				0.73,
+				0.73,
+			},
+		},
+	)
+
+	green := NewLambertian(
+		ConstantTexture{
+			Vec3{
+				0.12,
+				0.45,
+				0.15,
+			},
+		},
+	)
+
+	light := DiffuseLight{
+		ConstantTexture{
+			Vec3{
+				15,
+				15,
+				15,
+			},
+		},
+	}
+
+	flippedYZRectangle := FlipNormals{YZRectangle{
+		0,
+		555,
+		0,
+		555,
+		555,
+		green,
+	}}
+
+	hitables.add(flippedYZRectangle)
+
+	yzRectangle := YZRectangle{
+		0,
+		555,
+		0,
+		555,
+		0,
+		red,
+	}
+
+	hitables.add(yzRectangle)
+
+	xzRectangle := XZRectangle{
+		213,
+		343,
+		227,
+		332,
+		554,
+		light,
+	}
+
+	hitables.add(xzRectangle)
+
+	flippedXZRectangle := FlipNormals{XZRectangle{
+		0,
+		555,
+		0,
+		555,
+		555,
+		white,
+	}}
+
+	hitables.add(flippedXZRectangle)
+
+	xzRectangle = XZRectangle{
+		0,
+		555,
+		0,
+		555,
+		0,
+		white,
+	}
+
+	hitables.add(xzRectangle)
+
+	flippedXYRectangle := FlipNormals{XYRectangle{
+		0,
+		555,
+		0,
+		555,
+		555,
+		white,
+	}}
+
+	hitables.add(flippedXYRectangle)
+
+	return hitables
+}
