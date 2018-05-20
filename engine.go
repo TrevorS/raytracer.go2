@@ -6,9 +6,9 @@ import (
 
 func main() {
 	config := Config{
-		width:     640,
-		height:    480,
-		samples:   20,
+		width:     1024,
+		height:    768,
+		samples:   100,
 		from:      Vec3{13, 2, 3},
 		at:        Vec3{0, 0, 0},
 		up:        Vec3{0, 1, 0},
@@ -19,7 +19,7 @@ func main() {
 		timeEnd:   1,
 	}
 
-	world := EarthSphere(config, "earth.png")
+	world := SimpleLight(config)
 
 	camera := NewCamera(
 		config.from,

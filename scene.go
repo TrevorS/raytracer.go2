@@ -227,3 +227,55 @@ func EarthSphere(config Config, imageFileName string) Hitable {
 
 	return hitables
 }
+
+// SimpleLight returns a scene with simple lighting.
+func SimpleLight(config Config) Hitable {
+	noiseTexture := NewNoiseTexture(4)
+
+	hitables := NewHitableList(0)
+
+	sphere := NewStationarySphere(
+		Vec3{0, -1000, 0},
+		1000,
+		NewLambertian(noiseTexture),
+	)
+
+	hitables.add(sphere)
+
+	sphere = NewStationarySphere(
+		Vec3{0, 2, 0},
+		2,
+		NewLambertian(noiseTexture),
+	)
+
+	hitables.add(sphere)
+
+	sphere = NewStationarySphere(
+		Vec3{0, 7, 0},
+		2,
+		DiffuseLight{
+			ConstantTexture{
+				Vec3{4, 4, 4},
+			},
+		},
+	)
+
+	hitables.add(sphere)
+
+	rectangle := XYRectangle{
+		3,
+		5,
+		1,
+		3,
+		-2,
+		DiffuseLight{
+			ConstantTexture{
+				Vec3{4, 4, 4},
+			},
+		},
+	}
+
+	hitables.add(rectangle)
+
+	return hitables
+}

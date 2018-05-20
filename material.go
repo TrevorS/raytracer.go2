@@ -7,6 +7,7 @@ import (
 // Material represents different materials hitable objects can be made from.
 type Material interface {
 	scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Vec3, scattered Ray)
+	emitted(u, v float64, p Vec3) Vec3
 }
 
 // Lambertian is a diffuse Material.
@@ -28,6 +29,10 @@ func (l Lambertian) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Ve
 	attenuation = l.albedo.value(hit.u, hit.v, hit.p)
 
 	return
+}
+
+func (l Lambertian) emitted(u, v float64, p Vec3) Vec3 {
+	return emitBlack()
 }
 
 // Metal is a reflective Material.
@@ -57,6 +62,10 @@ func (m Metal) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Vec3, s
 	attenuation = m.albedo
 
 	return
+}
+
+func (m Metal) emitted(u, v float64, p Vec3) Vec3 {
+	return emitBlack()
 }
 
 // Dielectric is a material that refracts.
@@ -106,4 +115,25 @@ func (d Dielectric) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Ve
 	}
 
 	return
+}
+
+func (d Dielectric) emitted(u, v float64, p Vec3) Vec3 {
+	return emitBlack()
+}
+
+// DiffuseLight is a material that acts as a diffused light.
+type DiffuseLight struct {
+	emit Texture
+}
+
+func (dl DiffuseLight) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Vec3, scattered Ray) {
+	return false, Vec3{}, Ray{}
+}
+
+func (dl DiffuseLight) emitted(u, v float64, p Vec3) Vec3 {
+	return dl.emit.value(u, v, p)
+}
+
+func emitBlack() Vec3 {
+	return Vec3Zero()
 }
