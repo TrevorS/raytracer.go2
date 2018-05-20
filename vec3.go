@@ -20,6 +20,38 @@ func (v Vec3) get(index int) float64 {
 	return []float64{v.e0, v.e1, v.e2}[index]
 }
 
+func (v Vec3) set(index int, value float64) Vec3 {
+	if index == 0 {
+		return Vec3{value, v.e1, v.e2}
+	}
+
+	if index == 1 {
+		return Vec3{v.e0, value, v.e2}
+	}
+
+	if index == 2 {
+		return Vec3{v.e0, v.e1, value}
+	}
+
+	panic("Bad index!")
+}
+
+func (v *Vec3) inPlaceSet(index int, value float64) Vec3 {
+	if index == 0 {
+		v.e0 = value
+	}
+
+	if index == 1 {
+		v.e1 = value
+	}
+
+	if index == 2 {
+		v.e2 = value
+	}
+
+	return *v
+}
+
 func (v Vec3) x() float64 {
 	return v.e0
 }
