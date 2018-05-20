@@ -175,12 +175,12 @@ func RandomScene(config Config) Hitable {
 func TwoSpheres(config Config) Hitable {
 	hitables := NewHitableList(0)
 
-	perlinTexture := NewNoiseTexture()
+	marbleTexture := NewMarbleTexture(4)
 
 	sphere := NewStationarySphere(
 		Vec3{0, -1000, 0},
 		1000,
-		NewLambertian(perlinTexture),
+		NewLambertian(marbleTexture),
 	)
 
 	hitables.add(sphere)
@@ -188,7 +188,7 @@ func TwoSpheres(config Config) Hitable {
 	sphere = NewStationarySphere(
 		Vec3{0, 2, 0},
 		2,
-		NewLambertian(perlinTexture),
+		NewLambertian(marbleTexture),
 	)
 
 	hitables.add(sphere)

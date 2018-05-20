@@ -35,13 +35,36 @@ func (ct CheckerTexture) value(u, v float64, p Vec3) Vec3 {
 // NoiseTexture is a Texture with Perlin noise.
 type NoiseTexture struct {
 	noise Perlin
+	scale float64
 }
 
 // NewNoiseTexture returns a properly initialized NoiseTexture.
-func NewNoiseTexture() NoiseTexture {
-	return NoiseTexture{NewPerlin()}
+func NewNoiseTexture(scale float64) NoiseTexture {
+	return NoiseTexture{
+		noise: NewPerlin(),
+		scale: scale,
+	}
 }
 
 func (nt NoiseTexture) value(u, v float64, p Vec3) Vec3 {
-	return Vec3{1, 1, 1}.multiplyScalar(nt.noise.noise(p))
+	turbulenceDepth := 7
+
+	return Vec3{1, 1, 1}.multiplyScalar(nt.noise.turbulence(p.multiplyScalar(nt.scale), turbulenceDepth))
+}
+
+// MarbleTexture generates a marbled Texture using Perlin noise.
+type MarbleTexture NoiseTexture
+
+// NewMarbleTexture correctly generates a new MarbleTexture.
+func NewMarbleTexture(scale float64) MarbleTexture {
+	return MarbleTexture{
+		noise: NewPerlin(),
+		scale: scale,
+	}
+}
+
+func (mt MarbleTexture) value(u, v float64, p Vec3) Vec3 {
+	turbulenceDepth := 7
+
+	return Vec3{1, 1, 1}.multiplyScalar(0.5).multiplyScalar(1 + math.Sin(mt.scale*p.z()+10*mt.noise.turbulence(p, turbulenceDepth)))
 }

@@ -1,12 +1,13 @@
 package main
 
 import (
+	"math"
 	"math/rand"
 )
 
 // Perlin represents a Perlin noise generator.
 type Perlin struct {
-	randFloat []float64
+	randFloat []Vec3
 	permX     []int
 	permY     []int
 	permZ     []int
@@ -23,20 +24,57 @@ func NewPerlin() Perlin {
 }
 
 func (perlin Perlin) noise(p Vec3) float64 {
-	i := int(4*p.x()) & 255
-	j := int(4*p.y()) & 255
-	k := int(4*p.z()) & 255
+	u := p.x() - math.Floor(p.x())
+	v := p.y() - math.Floor(p.y())
+	w := p.z() - math.Floor(p.z())
 
-	index := perlin.permX[i] ^ perlin.permY[j] ^ perlin.permZ[k]
+	i := int(math.Floor(p.x()))
+	j := int(math.Floor(p.y()))
+	k := int(math.Floor(p.z()))
 
-	return perlin.randFloat[index]
+	c := [2][2][2]Vec3{}
+
+	for di := 0; di < 2; di++ {
+		for dj := 0; dj < 2; dj++ {
+			for dk := 0; dk < 2; dk++ {
+				index := perlin.permX[(i+di)&255] ^
+					perlin.permY[(j+dj)&255] ^
+					perlin.permZ[(k+dk)&255]
+
+				c[di][dj][dk] = perlin.randFloat[index]
+			}
+		}
+	}
+
+	return PerlinTriLinearInterpolation(c, u, v, w)
 }
 
-func perlinGenerate() []float64 {
-	var p []float64
+func (perlin Perlin) turbulence(p Vec3, depth int) float64 {
+	acc := 0.0
+	weight := 1.0
+
+	tempP := p
+
+	for i := 0; i < depth; i++ {
+		acc += weight * perlin.noise(tempP)
+		weight *= 0.5
+		tempP.inPlaceMultiplyScalar(2)
+	}
+
+	return math.Abs(acc)
+}
+
+func perlinGenerate() []Vec3 {
+	var p []Vec3
 
 	for i := 0; i < 256; i++ {
-		p = append(p, rand.Float64())
+		vec := Vec3{
+			-1 + 2*rand.Float64(),
+			-1 + 2*rand.Float64(),
+			-1 + 2*rand.Float64(),
+		}.unitVector()
+
+		p = append(p, vec)
 	}
 
 	return p

@@ -43,3 +43,31 @@ func Schlick(cosine, refractiveIndex float64) float64 {
 
 	return r0 + (1-r0)*math.Pow((1-cosine), 5)
 }
+
+// PerlinTriLinearInterpolation performs Perlin tri-linear interpolation. :)
+func PerlinTriLinearInterpolation(c [2][2][2]Vec3, u, v, w float64) float64 {
+	uu := u * u * (3 - 2*u)
+	vv := v * v * (3 - 2*v)
+	ww := w * w * (3 - 2*w)
+
+	acc := 0.0
+
+	for i := 0; i < 2; i++ {
+		for j := 0; j < 2; j++ {
+			for k := 0; k < 2; k++ {
+				weightV := Vec3{
+					u - float64(i),
+					v - float64(j),
+					w - float64(k),
+				}
+
+				acc += (float64(i)*uu + (1-float64(i))*(1-uu)) *
+					(float64(j)*vv + (1-float64(j))*(1-vv)) *
+					(float64(k)*ww + (1-float64(k))*(1-ww)) *
+					c[i][j][k].dot(weightV)
+			}
+		}
+	}
+
+	return acc
+}
