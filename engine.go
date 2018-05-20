@@ -19,7 +19,7 @@ func main() {
 		timeEnd:   1,
 	}
 
-	world := TwoSpheres(config)
+	world := EarthSphere(config, "earth.png")
 
 	camera := NewCamera(
 		config.from,

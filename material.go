@@ -25,7 +25,7 @@ func (l Lambertian) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Ve
 	// We could only scatter with some probability and divide albedo by the probability.
 	scattered = Ray{hit.p, target.subtract(hit.p), rayIn.time()}
 	didScatter = true
-	attenuation = l.albedo.value(0, 0, hit.p)
+	attenuation = l.albedo.value(hit.u, hit.v, hit.p)
 
 	return
 }

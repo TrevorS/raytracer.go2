@@ -1,6 +1,9 @@
 package main
 
-import "math"
+import (
+	"image"
+	"math"
+)
 
 // Texture represents a programmatic way of determining the color of a point.
 type Texture interface {
@@ -67,4 +70,49 @@ func (mt MarbleTexture) value(u, v float64, p Vec3) Vec3 {
 	turbulenceDepth := 7
 
 	return Vec3{1, 1, 1}.multiplyScalar(0.5).multiplyScalar(1 + math.Sin(mt.scale*p.z()+10*mt.noise.turbulence(p, turbulenceDepth)))
+}
+
+// ImageTexture uses an Image as a Texture.
+type ImageTexture struct {
+	data image.Image
+	nx   int
+	ny   int
+}
+
+// NewImageTexture correctly instantiates an ImageTexture.
+func NewImageTexture(data image.Image) ImageTexture {
+	return ImageTexture{
+		data: data,
+		nx:   data.Bounds().Max.X,
+		ny:   data.Bounds().Max.Y,
+	}
+}
+
+func (it ImageTexture) value(u, v float64, p Vec3) Vec3 {
+	i := int(u * float64(it.nx))
+	j := int((1-v)*float64(it.ny) - 0.001)
+
+	if i < 0 {
+		i = 0
+	}
+
+	if j < 0 {
+		j = 0
+	}
+
+	if i > it.nx-1 {
+		i = it.nx - 1
+	}
+
+	if j > it.ny-1 {
+		j = it.ny - 1
+	}
+
+	r, g, b, _ := it.data.At(i, j).RGBA()
+
+	normR := float64(r) / 65536
+	normG := float64(g) / 65536
+	normB := float64(b) / 65536
+
+	return Vec3{normR, normG, normB}
 }

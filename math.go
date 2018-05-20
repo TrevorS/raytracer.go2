@@ -71,3 +71,14 @@ func PerlinTriLinearInterpolation(c [2][2][2]Vec3, u, v, w float64) float64 {
 
 	return acc
 }
+
+// GetSphereUV returns U and V for a Sphere for doing image textures.
+func GetSphereUV(p Vec3) (u, v float64) {
+	phi := math.Atan2(p.z(), p.x())
+	theta := math.Asin(p.y())
+
+	u = 1 - (phi+math.Pi)/(2*math.Pi)
+	v = (theta + math.Pi/2) / math.Pi
+
+	return
+}

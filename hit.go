@@ -9,6 +9,8 @@ type Hitable interface {
 // Hit is a record of a Hitable object being hit.
 type Hit struct {
 	t        float64
+	u        float64
+	v        float64
 	p        Vec3
 	normal   Vec3
 	material Material

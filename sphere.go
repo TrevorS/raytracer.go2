@@ -61,9 +61,13 @@ func (s Sphere) hit(r Ray, tMin, tMax float64) (bool, *Hit) {
 		if temp < tMax && temp > tMin {
 			p := r.pointAtParameter(temp)
 
+			u, v := GetSphereUV(p.subtract(s.center(r.time())).divideScalar(s.radius))
+
 			hit := Hit{
 				t:        temp,
 				p:        p,
+				u:        u,
+				v:        v,
 				normal:   p.subtract(s.center(r.time())).divideScalar(s.radius),
 				material: s.material,
 			}
@@ -75,9 +79,13 @@ func (s Sphere) hit(r Ray, tMin, tMax float64) (bool, *Hit) {
 		if temp < tMax && temp > tMin {
 			p := r.pointAtParameter(temp)
 
+			u, v := GetSphereUV(p.subtract(s.center(r.time())).divideScalar(s.radius))
+
 			hit := Hit{
 				t:        temp,
 				p:        p,
+				u:        u,
+				v:        v,
 				normal:   p.subtract(s.center(r.time())).divideScalar(s.radius),
 				material: s.material,
 			}

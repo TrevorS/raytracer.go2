@@ -1,7 +1,9 @@
 package main
 
 import (
+	"image"
 	"math/rand"
+	"os"
 )
 
 // SimpleScene returns a HitableList of Spheres for testing.
@@ -189,6 +191,36 @@ func TwoSpheres(config Config) Hitable {
 		Vec3{0, 2, 0},
 		2,
 		NewLambertian(marbleTexture),
+	)
+
+	hitables.add(sphere)
+
+	return hitables
+}
+
+// EarthSphere returns a single Sphere wrapped in an image texture.
+func EarthSphere(config Config, imageFileName string) Hitable {
+	hitables := NewHitableList(0)
+
+	imageFile, err := os.Open(imageFileName)
+	defer imageFile.Close()
+
+	if err != nil {
+		panic(err)
+	}
+
+	img, _, err := image.Decode(imageFile)
+
+	if err != nil {
+		panic(err)
+	}
+
+	imageTexture := NewImageTexture(img)
+
+	sphere := NewStationarySphere(
+		Vec3{0, 0, 0},
+		2,
+		NewLambertian(imageTexture),
 	)
 
 	hitables.add(sphere)
