@@ -390,5 +390,21 @@ func CornellBox(config Config) Hitable {
 
 	hitables.add(flippedXYRectangle)
 
+	box := NewBox(
+		Vec3{130, 0, 65},
+		Vec3{295, 165, 230},
+		white,
+	)
+
+	hitables.add(box)
+
+	box = NewBox(
+		Vec3{265, 0, 295},
+		Vec3{430, 330, 460},
+		white,
+	)
+
+	hitables.add(box)
+
 	return hitables
 }
