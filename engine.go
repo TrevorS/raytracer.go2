@@ -2,7 +2,10 @@ package main
 
 import (
 	"math/rand"
+	"sync"
 )
+
+var wg sync.WaitGroup
 
 // Render takes the Camera, Hitables, and Config and outputs the framebuffer.
 func Render(camera Camera, world Hitable, config Config) []Vec3 {
@@ -10,7 +13,7 @@ func Render(camera Camera, world Hitable, config Config) []Vec3 {
 
 	for j := config.height - 1; j >= 0; j-- {
 		for i := 0; i < config.width; i++ {
-			color := sample(i, j, config, camera, world)
+			color := sampling(i, j, config, camera, world)
 
 			framebuffer = append(framebuffer, color)
 		}
@@ -19,21 +22,35 @@ func Render(camera Camera, world Hitable, config Config) []Vec3 {
 	return framebuffer
 }
 
-func sample(i, j int, config Config, camera Camera, world Hitable) Vec3 {
+func sampling(i, j int, config Config, camera Camera, world Hitable) Vec3 {
 	color := Vec3Zero()
 
+	samples := make(chan Vec3, config.samples)
+
 	for s := 0; s < config.samples; s++ {
-		u := (float64(i) + rand.Float64()) / float64(config.width)
-		v := (float64(j) + rand.Float64()) / float64(config.height)
+		wg.Add(1)
+		go sample(i, j, config.width, config.height, camera, world, samples)
+	}
 
-		r := camera.getRay(u, v)
+	wg.Wait()
+	close(samples)
 
-		newColor := Color(r, world, 0)
-
+	for newColor := range samples {
 		color.inPlaceAdd(newColor)
 	}
 
 	color.inPlaceDivideScalar(float64(config.samples))
 
 	return color
+}
+
+func sample(i, j, width, height int, camera Camera, world Hitable, samples chan Vec3) {
+	defer wg.Done()
+
+	u := (float64(i) + rand.Float64()) / float64(width)
+	v := (float64(j) + rand.Float64()) / float64(height)
+
+	r := camera.getRay(u, v)
+
+	samples <- Color(r, world, 0)
 }
