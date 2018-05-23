@@ -4,7 +4,7 @@ func main() {
 	config := Config{
 		width:     500,
 		height:    500,
-		samples:   100,
+		samples:   1000,
 		from:      Vec3{278, 278, -800},
 		at:        Vec3{278, 278, 0},
 		up:        Vec3{0, 1, 0},

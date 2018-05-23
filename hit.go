@@ -6,6 +6,8 @@ import "math"
 type Hitable interface {
 	hit(r Ray, tMin, tMax float64) (bool, *Hit)
 	boundingBox(t0, t1 float64) (bool, *AABB)
+	pdfValue(o, direction Vec3) float64
+	random(o Vec3) Vec3
 }
 
 // Hit is a record of a Hitable object being hit.
@@ -37,6 +39,14 @@ func (fn FlipNormals) hit(r Ray, tMin, tMax float64) (bool, *Hit) {
 
 func (fn FlipNormals) boundingBox(t0, t1 float64) (bool, *AABB) {
 	return fn.hitable.boundingBox(t0, t1)
+}
+
+func (fn FlipNormals) pdfValue(o, direction Vec3) float64 {
+	return 0.0
+}
+
+func (fn FlipNormals) random(o Vec3) Vec3 {
+	return Vec3{1, 0, 0}
 }
 
 // Translate moves a Hitable by an offset.
@@ -76,6 +86,14 @@ func (ts Translate) boundingBox(t0, t1 float64) (bool, *AABB) {
 	}
 
 	return hasBox, nil
+}
+
+func (ts Translate) pdfValue(o, direction Vec3) float64 {
+	return 0.0
+}
+
+func (ts Translate) random(o Vec3) Vec3 {
+	return Vec3{1, 0, 0}
 }
 
 // RotateY is a Hitable that contains a Y rotated Hitable.
@@ -189,4 +207,12 @@ func (ry RotateY) hit(r Ray, tMin, tMax float64) (bool, *Hit) {
 
 func (ry RotateY) boundingBox(t0, t1 float64) (bool, *AABB) {
 	return ry.hasBox, &ry.bbox
+}
+
+func (ry RotateY) pdfValue(o, direction Vec3) float64 {
+	return 0.0
+}
+
+func (ry RotateY) random(o Vec3) Vec3 {
+	return Vec3{1, 0, 0}
 }

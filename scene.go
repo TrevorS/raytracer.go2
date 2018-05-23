@@ -346,18 +346,18 @@ func CornellBox(config Config) Hitable {
 
 	hitables.add(yzRectangle)
 
-	xzRectangle := XZRectangle{
+	flippedXZRectangle := FlipNormals{XZRectangle{
 		213,
 		343,
 		227,
 		332,
 		554,
 		light,
-	}
+	}}
 
-	hitables.add(xzRectangle)
+	hitables.add(flippedXZRectangle)
 
-	flippedXZRectangle := FlipNormals{XZRectangle{
+	flippedXZRectangle = FlipNormals{XZRectangle{
 		0,
 		555,
 		0,
@@ -368,7 +368,7 @@ func CornellBox(config Config) Hitable {
 
 	hitables.add(flippedXZRectangle)
 
-	xzRectangle = XZRectangle{
+	xzRectangle := XZRectangle{
 		0,
 		555,
 		0,

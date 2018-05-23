@@ -1,5 +1,10 @@
 package main
 
+import (
+	"math"
+	"math/rand"
+)
+
 // XYRectangle represents an axis-aligned rectangle.
 type XYRectangle struct {
 	x0       float64
@@ -50,6 +55,14 @@ func (rec XYRectangle) boundingBox(t0, t1 float64) (bool, *AABB) {
 	}
 
 	return true, &box
+}
+
+func (rec XYRectangle) pdfValue(o, direction Vec3) float64 {
+	return 0.0
+}
+
+func (rec XYRectangle) random(o Vec3) Vec3 {
+	return Vec3{1, 0, 0}
 }
 
 // XZRectangle represents an axis-aligned rectangle.
@@ -104,6 +117,30 @@ func (rec XZRectangle) boundingBox(t0, t1 float64) (bool, *AABB) {
 	return true, &box
 }
 
+func (rec XZRectangle) pdfValue(o, direction Vec3) float64 {
+	didHit, hit := rec.hit(Ray{o, direction, math.MaxFloat64}, 0.001, math.MaxFloat64)
+
+	if didHit {
+		area := (rec.x1 - rec.x0) * (rec.z1 - rec.z0)
+		distanceSquared := hit.t * hit.t * direction.squaredLength()
+		cosine := math.Abs(direction.dot(hit.normal) / direction.length())
+
+		return distanceSquared / (cosine * area)
+	}
+
+	return 0
+}
+
+func (rec XZRectangle) random(o Vec3) Vec3 {
+	randomPoint := Vec3{
+		rec.x0 + rand.Float64()*(rec.x1-rec.x0),
+		rec.k,
+		rec.z0 + rand.Float64()*(rec.z1-rec.z0),
+	}
+
+	return randomPoint.subtract(o)
+}
+
 // YZRectangle represents an axis-aligned rectangle.
 type YZRectangle struct {
 	y0       float64
@@ -154,4 +191,12 @@ func (rec YZRectangle) boundingBox(t0, t1 float64) (bool, *AABB) {
 	}
 
 	return true, &box
+}
+
+func (rec YZRectangle) pdfValue(o, direction Vec3) float64 {
+	return 0.0
+}
+
+func (rec YZRectangle) random(o Vec3) Vec3 {
+	return Vec3{1, 0, 0}
 }

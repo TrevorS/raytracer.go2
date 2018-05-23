@@ -9,7 +9,7 @@ import (
 type Material interface {
 	scatter(rayIn Ray, hit Hit) (didScatter bool, albedo Vec3, scattered Ray, pdf float64)
 	scatteringPdf(rayIn Ray, hit Hit, scattered Ray) float64
-	emitted(u, v float64, p Vec3) Vec3
+	emitted(rayIn Ray, hit Hit, u, v float64, p Vec3) Vec3
 }
 
 // Lambertian is a diffuse Material.
@@ -46,7 +46,7 @@ func (l Lambertian) scatteringPdf(rayIn Ray, hit Hit, scattered Ray) float64 {
 	return cosine / math.Pi
 }
 
-func (l Lambertian) emitted(u, v float64, p Vec3) Vec3 {
+func (l Lambertian) emitted(rayIn Ray, hit Hit, u, v float64, p Vec3) Vec3 {
 	return EmitBlack()
 }
 
@@ -83,7 +83,7 @@ func (m Metal) scatteringPdf(rayIn Ray, hit Hit, scattered Ray) float64 {
 	return 0
 }
 
-func (m Metal) emitted(u, v float64, p Vec3) Vec3 {
+func (m Metal) emitted(rayIn Ray, hit Hit, u, v float64, p Vec3) Vec3 {
 	return EmitBlack()
 }
 
@@ -140,7 +140,7 @@ func (d Dielectric) scatteringPdf(rayIn Ray, hit Hit, scattered Ray) float64 {
 	return 0
 }
 
-func (d Dielectric) emitted(u, v float64, p Vec3) Vec3 {
+func (d Dielectric) emitted(rayIn Ray, hit Hit, u, v float64, p Vec3) Vec3 {
 	return EmitBlack()
 }
 
@@ -157,8 +157,12 @@ func (dl DiffuseLight) scatteringPdf(rayIn Ray, hit Hit, scattered Ray) float64 
 	return 0
 }
 
-func (dl DiffuseLight) emitted(u, v float64, p Vec3) Vec3 {
-	return dl.emit.value(u, v, p)
+func (dl DiffuseLight) emitted(rayIn Ray, hit Hit, u, v float64, p Vec3) Vec3 {
+	if hit.normal.dot(rayIn.direction()) < 0.0 {
+		return dl.emit.value(u, v, p)
+	}
+
+	return EmitBlack()
 }
 
 // Isotropic has a scattering function that picks a uniform random direction.
@@ -184,6 +188,6 @@ func (it Isotropic) scatteringPdf(rayIn Ray, hit Hit, scattered Ray) float64 {
 	return 0
 }
 
-func (it Isotropic) emitted(u, v float64, p Vec3) Vec3 {
+func (it Isotropic) emitted(rayIn Ray, hit Hit, u, v float64, p Vec3) Vec3 {
 	return EmitBlack()
 }

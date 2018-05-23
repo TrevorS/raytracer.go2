@@ -102,3 +102,11 @@ func (b Box) boundingBox(t0, t1 float64) (hasBox bool, box *AABB) {
 
 	return true, &bbox
 }
+
+func (b Box) pdfValue(o, direction Vec3) float64 {
+	return 0.0
+}
+
+func (b Box) random(o Vec3) Vec3 {
+	return Vec3{1, 0, 0}
+}

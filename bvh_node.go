@@ -89,3 +89,11 @@ func (n BVHNode) hit(r Ray, tMin, tMax float64) (bool, *Hit) {
 func (n BVHNode) boundingBox(t0, t1 float64) (bool, *AABB) {
 	return true, n.box
 }
+
+func (n BVHNode) pdfValue(o, direction Vec3) float64 {
+	return 0.0
+}
+
+func (n BVHNode) random(o Vec3) Vec3 {
+	return Vec3{1, 0, 0}
+}
