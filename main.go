@@ -2,8 +2,8 @@ package main
 
 func main() {
 	config := Config{
-		width:     640,
-		height:    480,
+		width:     500,
+		height:    500,
 		samples:   100,
 		from:      Vec3{278, 278, -800},
 		at:        Vec3{278, 278, 0},
@@ -15,7 +15,7 @@ func main() {
 		timeEnd:   1,
 	}
 
-	world := CornellSmoke(config)
+	world := CornellBox(config)
 
 	camera := NewCamera(
 		config.from,

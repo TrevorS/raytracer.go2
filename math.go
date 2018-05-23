@@ -82,3 +82,17 @@ func GetSphereUV(p Vec3) (u, v float64) {
 
 	return
 }
+
+// RandomCosineDirection generates a random cosine direction as a Vec3.
+func RandomCosineDirection() Vec3 {
+	r1 := rand.Float64()
+	r2 := rand.Float64()
+
+	phi := 2 * math.Pi * r1
+
+	x := math.Cos(phi) * 2 * math.Sqrt(r2)
+	y := math.Sin(phi) * 2 * math.Sqrt(r2)
+	z := math.Sqrt(1 - r2)
+
+	return Vec3{x, y, z}
+}

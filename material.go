@@ -1,12 +1,14 @@
 package main
 
 import (
+	"math"
 	"math/rand"
 )
 
 // Material represents different materials hitable objects can be made from.
 type Material interface {
-	scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Vec3, scattered Ray)
+	scatter(rayIn Ray, hit Hit) (didScatter bool, albedo Vec3, scattered Ray, pdf float64)
+	scatteringPdf(rayIn Ray, hit Hit, scattered Ray) float64
 	emitted(u, v float64, p Vec3) Vec3
 }
 
@@ -20,19 +22,32 @@ func NewLambertian(albedo Texture) Lambertian {
 	return Lambertian{albedo}
 }
 
-func (l Lambertian) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Vec3, scattered Ray) {
-	target := hit.p.add(hit.normal).add(RandomInUnitSphere())
+func (l Lambertian) scatter(rayIn Ray, hit Hit) (didScatter bool, albedo Vec3, scattered Ray, pdf float64) {
+	var uvw Onb
+	uvw.buildFromW(hit.normal)
 
-	// We could only scatter with some probability and divide albedo by the probability.
-	scattered = Ray{hit.p, target.subtract(hit.p), rayIn.time()}
+	direction := uvw.local(RandomCosineDirection())
+
+	scattered = Ray{hit.p, direction.unitVector(), rayIn.time()}
+	albedo = l.albedo.value(hit.u, hit.v, hit.p)
+	pdf = uvw.w().dot(scattered.direction()) / math.Pi
 	didScatter = true
-	attenuation = l.albedo.value(hit.u, hit.v, hit.p)
 
 	return
 }
 
+func (l Lambertian) scatteringPdf(rayIn Ray, hit Hit, scattered Ray) float64 {
+	cosine := hit.normal.dot(scattered.direction().unitVector())
+
+	if cosine < 0 {
+		cosine = 0
+	}
+
+	return cosine / math.Pi
+}
+
 func (l Lambertian) emitted(u, v float64, p Vec3) Vec3 {
-	return emitBlack()
+	return EmitBlack()
 }
 
 // Metal is a reflective Material.
@@ -54,18 +69,22 @@ func NewMetal(albedo Vec3, fuzz float64) Metal {
 	return Metal{albedo, f}
 }
 
-func (m Metal) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Vec3, scattered Ray) {
+func (m Metal) scatter(rayIn Ray, hit Hit) (didScatter bool, albedo Vec3, scattered Ray, pdf float64) {
 	reflected := rayIn.direction().unitVector().reflect(hit.normal)
 
 	scattered = Ray{hit.p, reflected.add(RandomInUnitSphere().multiplyScalar(m.fuzz)), rayIn.time()}
 	didScatter = scattered.direction().dot(hit.normal) > 0
-	attenuation = m.albedo
+	albedo = m.albedo
 
 	return
 }
 
+func (m Metal) scatteringPdf(rayIn Ray, hit Hit, scattered Ray) float64 {
+	return 0
+}
+
 func (m Metal) emitted(u, v float64, p Vec3) Vec3 {
-	return emitBlack()
+	return EmitBlack()
 }
 
 // Dielectric is a material that refracts.
@@ -78,14 +97,14 @@ func NewDielectric(reflectiveIndex float64) Dielectric {
 	return Dielectric{reflectiveIndex}
 }
 
-func (d Dielectric) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Vec3, scattered Ray) {
+func (d Dielectric) scatter(rayIn Ray, hit Hit) (didScatter bool, albedo Vec3, scattered Ray, pdf float64) {
 	didScatter = true
 	var outwardNormal Vec3
 	var niOverNt float64
 
 	reflected := rayIn.direction().unitVector().reflect(hit.normal)
 
-	attenuation = Vec3{1.0, 1.0, 1.0}
+	albedo = Vec3{1.0, 1.0, 1.0}
 
 	var reflectProb float64
 	var cosine float64
@@ -117,8 +136,12 @@ func (d Dielectric) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Ve
 	return
 }
 
+func (d Dielectric) scatteringPdf(rayIn Ray, hit Hit, scattered Ray) float64 {
+	return 0
+}
+
 func (d Dielectric) emitted(u, v float64, p Vec3) Vec3 {
-	return emitBlack()
+	return EmitBlack()
 }
 
 // DiffuseLight is a material that acts as a diffused light.
@@ -126,8 +149,12 @@ type DiffuseLight struct {
 	emit Texture
 }
 
-func (dl DiffuseLight) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Vec3, scattered Ray) {
-	return false, Vec3{}, Ray{}
+func (dl DiffuseLight) scatter(rayIn Ray, hit Hit) (didScatter bool, albedo Vec3, scattered Ray, pdf float64) {
+	return false, Vec3{}, Ray{}, 0.0
+}
+
+func (dl DiffuseLight) scatteringPdf(rayIn Ray, hit Hit, scattered Ray) float64 {
+	return 0
 }
 
 func (dl DiffuseLight) emitted(u, v float64, p Vec3) Vec3 {
@@ -139,7 +166,7 @@ type Isotropic struct {
 	albedo Texture
 }
 
-func (it Isotropic) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Vec3, scattered Ray) {
+func (it Isotropic) scatter(rayIn Ray, hit Hit) (didScatter bool, albedo Vec3, scattered Ray, pdf float64) {
 	didScatter = true
 
 	scattered = Ray{
@@ -148,15 +175,15 @@ func (it Isotropic) scatter(rayIn Ray, hit Hit) (didScatter bool, attenuation Ve
 		rayIn.time(),
 	}
 
-	attenuation = it.albedo.value(hit.u, hit.v, hit.p)
+	albedo = it.albedo.value(hit.u, hit.v, hit.p)
 
 	return
 }
 
-func (it Isotropic) emitted(u, v float64, p Vec3) Vec3 {
-	return emitBlack()
+func (it Isotropic) scatteringPdf(rayIn Ray, hit Hit, scattered Ray) float64 {
+	return 0
 }
 
-func emitBlack() Vec3 {
-	return Vec3Zero()
+func (it Isotropic) emitted(u, v float64, p Vec3) Vec3 {
+	return EmitBlack()
 }
