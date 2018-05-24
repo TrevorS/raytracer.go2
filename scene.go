@@ -281,7 +281,7 @@ func SimpleLight(config Config) Hitable {
 }
 
 // CornellBox is the standard Cornell scene.
-func CornellBox(config Config) Hitable {
+func CornellBox(config Config) (world Hitable, lightShapes Hitable) {
 	hitables := NewHitableList(0)
 
 	red := NewLambertian(
@@ -324,6 +324,15 @@ func CornellBox(config Config) Hitable {
 		},
 	}
 
+	lightShape := XZRectangle{
+		213,
+		343,
+		227,
+		332,
+		554,
+		light,
+	}
+
 	flippedYZRectangle := FlipNormals{YZRectangle{
 		0,
 		555,
@@ -346,14 +355,7 @@ func CornellBox(config Config) Hitable {
 
 	hitables.add(yzRectangle)
 
-	flippedXZRectangle := FlipNormals{XZRectangle{
-		213,
-		343,
-		227,
-		332,
-		554,
-		light,
-	}}
+	flippedXZRectangle := FlipNormals{lightShape}
 
 	hitables.add(flippedXZRectangle)
 
@@ -418,7 +420,7 @@ func CornellBox(config Config) Hitable {
 
 	hitables.add(box)
 
-	return hitables
+	return hitables, lightShape
 }
 
 // CornellSmoke is a smokey version of the Cornell box.

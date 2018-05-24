@@ -15,7 +15,7 @@ func main() {
 		timeEnd:   1,
 	}
 
-	world := CornellBox(config)
+	world, lightShapes := CornellBox(config)
 
 	camera := NewCamera(
 		config.from,
@@ -29,7 +29,7 @@ func main() {
 		config.timeEnd,
 	)
 
-	framebuffer := Render(camera, world, config)
+	framebuffer := Render(camera, world, lightShapes, config)
 
 	WriteImage(&framebuffer, config)
 }
