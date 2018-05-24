@@ -406,12 +406,17 @@ func CornellBox(config Config) (world Hitable, lightShapes Hitable) {
 
 	hitables.add(box)
 
+	aluminum := NewMetal(
+		Vec3{0.8, 0.85, 0.88},
+		0,
+	)
+
 	box = Translate{
 		NewRotateY(
 			NewBox(
 				Vec3{0, 0, 0},
 				Vec3{165, 330, 165},
-				white,
+				aluminum,
 			),
 			15,
 		),

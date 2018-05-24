@@ -11,6 +11,18 @@ type Pdf interface {
 	generate() Vec3
 }
 
+// PdfZero is a standin for a blank PDF.
+type PdfZero struct {
+}
+
+func (zPdf PdfZero) value(direction Vec3) float64 {
+	return 0.0
+}
+
+func (zPdf PdfZero) generate() Vec3 {
+	return Vec3Zero()
+}
+
 // CosinePdf is a cosine version of a PDF.
 type CosinePdf struct {
 	uvw Onb

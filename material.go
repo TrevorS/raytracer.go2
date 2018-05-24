@@ -63,7 +63,14 @@ func NewMetal(albedo Vec3, fuzz float64) Metal {
 }
 
 func (m Metal) scatter(rayIn Ray, hit Hit) (didScatter bool, scatter Scatter) {
-	return true, Scatter{Ray{}, true, Vec3{}, NewCosinePdf(Vec3Zero())}
+	reflected := rayIn.direction().unitVector().reflect(hit.normal)
+
+	specularRay := Ray{hit.p, reflected.add(RandomInUnitSphere().multiplyScalar(m.fuzz)), rayIn.time()}
+	isSpecular := true
+	attenuation := m.albedo
+	pdf := PdfZero{}
+
+	return true, Scatter{specularRay, isSpecular, attenuation, pdf}
 }
 
 func (m Metal) scatteringPdf(rayIn Ray, hit Hit, scattered Ray) float64 {

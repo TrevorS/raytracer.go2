@@ -13,6 +13,12 @@ func Color(r Ray, hitable Hitable, lightShape Hitable, depth int) Vec3 {
 		emitted := hit.material.emitted(r, *hit, hit.u, hit.v, hit.p)
 
 		if depth < 50 && didScatter {
+			if scatter.isSpecular {
+				return scatter.attenuation.multiply(
+					Color(scatter.specularRay, hitable, lightShape, depth+1),
+				)
+			}
+
 			hitablePdf := HitablePdf{lightShape, hit.p}
 			pdf := NewMixturePdf(hitablePdf, scatter.pdf)
 
