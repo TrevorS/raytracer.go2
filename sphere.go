@@ -112,9 +112,26 @@ func (s Sphere) boundingBox(t0, t1 float64) (hasBox bool, box *AABB) {
 }
 
 func (s Sphere) pdfValue(o, direction Vec3) float64 {
-	return 0.0
+	didHit, _ := s.hit(Ray{o, direction, 0.0}, 0.001, math.MaxFloat64)
+
+	if didHit {
+		cosThetaMax := math.Sqrt(1 - s.radius*s.radius/s.center(0).subtract(o).squaredLength())
+		solidAngle := 2 * math.Pi * (1 - cosThetaMax)
+
+		return 1 / solidAngle
+	}
+
+	return 0
 }
 
 func (s Sphere) random(o Vec3) Vec3 {
-	return Vec3{1, 0, 0}
+	direction := s.center(0).subtract(o)
+
+	distanceSquared := direction.squaredLength()
+
+	uvw := Onb{}
+
+	uvw.buildFromW(direction)
+
+	return uvw.local(RandomToSphere(s.radius, distanceSquared))
 }

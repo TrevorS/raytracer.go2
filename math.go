@@ -20,6 +20,20 @@ func RandomInUnitSphere() Vec3 {
 	}
 }
 
+// RandomToSphere :)
+func RandomToSphere(radius, distanceSquared float64) Vec3 {
+	r1 := rand.Float64()
+	r2 := rand.Float64()
+	phi := 2 * math.Pi * r1
+
+	z := 1 + r2*(math.Sqrt(1-radius*radius/distanceSquared)-1)
+
+	x := math.Cos(phi) * math.Sqrt(1-z*z)
+	y := math.Sin(phi) * math.Sqrt(1-z*z)
+
+	return Vec3{x, y, z}
+}
+
 // RandomInUnitDisk returns a random Vector within the unit disk.
 func RandomInUnitDisk() Vec3 {
 	for {

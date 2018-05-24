@@ -11,6 +11,22 @@ type Material interface {
 	emitted(rayIn Ray, hit Hit, u, v float64, p Vec3) Vec3
 }
 
+// MaterialZero represents a blank material.
+type MaterialZero struct {
+}
+
+func (mz MaterialZero) scatter(rayIn Ray, hit Hit) (didScatter bool, scatter Scatter) {
+	return false, Scatter{}
+}
+
+func (mz MaterialZero) scatteringPdf(rayIn Ray, hit Hit, scattered Ray) float64 {
+	return 0.0
+}
+
+func (mz MaterialZero) emitted(rayIn Ray, hit Hit, u, v float64, p Vec3) Vec3 {
+	return Vec3Zero()
+}
+
 // Lambertian is a diffuse Material.
 type Lambertian struct {
 	albedo Texture
